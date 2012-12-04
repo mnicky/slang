@@ -12,15 +12,15 @@
 (def y (struct []))
 (def z (struct))
 
-(set y.a 20)
+(set y.a 20)              ;  or  (set y a 20)  ??
 (set y.b 30)
 
-(print x.a)
+(print x.a)               ;  or  (print (get x a))  ??
 
 (print (= x.a y.a))
 (print (= x y))
 
-(for [i [1 10]]
+(for [i [1 10]]           ; or  (for [i 1 10]...)  ??
   (print x.a)
   (def y (struct)))
 
