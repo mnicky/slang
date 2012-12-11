@@ -17,7 +17,7 @@
   (when env
     (let [val (get @env sym :not-found)]
       (if (= :not-found val)
-        (recur sym (get :outer-env env))
+        (recur sym (get @env :outer-env))
         val))))
 
 (defn add-binding
@@ -52,14 +52,9 @@
                                (apply (first exprs) (rest exprs))))))
 
 
-;FIXME:
-; (evals '(def p1 (fun (x) (+ 1 x))))
-; (evals '(p1 2))
-;=> NullPointerException   clojure.core/apply (core.clj:601)
 
-
+;; design proposal? ---------------
 (comment
-; design proposal?
 
 (quote w)
 
