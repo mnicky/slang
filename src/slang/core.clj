@@ -35,8 +35,8 @@
 (defn add-clojure-binds
   "Add bindings for a few clojure functions to environment 'env' and return it."
   [env]
-  (doseq [fns {'+ +, '- -, '* *, '/ /, '= =, '< <, '> >}]
-    (bind (key fns) (val fns) env))
+  (doseq [binds {'+ +, '- -, '* *, '/ /, '= =, '< <, '> >}]
+    (bind (key binds) (val binds) env))
   env)
 
 (defonce global-env (add-clojure-binds (new-env)))
