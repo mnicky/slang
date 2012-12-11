@@ -8,16 +8,16 @@ Usage
 Only small subset has been implemented so far. However, you can already play
 with the `evals` function :)
 
-```clojure
+```scheme
 (use 'slang.core)
 
-(evals '(def x 42))
+(evals '(def ans 42))
 ;=> 42
 
 (evals '(def second (fun (x y) y)))
 ;=> #<some-fn-describing-string>
 
-(evals '(second 1 x))
+(evals '(second 1 ans))
 ;=> 42
 ```
 
