@@ -14,8 +14,8 @@ with the `evals` function :)
 (evals '(def ans 42))
 ;=> 42
 (evals '(def second (fun (x y) y)))
-;=> #<some-fn-describing-string>
-(evals '(second 1 ans))
+;=> #<some-fn-describing-string>cd
+(evals '(second "give me" ans))
 ;=> 42
 
 ;; or more advanced things like this:
