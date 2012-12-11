@@ -29,11 +29,10 @@
   ""
   [env]
   (doseq [fns {'+ +, '- -, '* *, '/ /, 'T true, 'F false}]
-    (add-binding (key fns) (val fns) env)))
+    (add-binding (key fns) (val fns) env))
+  env)
 
-(def global-env (new-env))
-
-(add-clojure-fns global-env)
+(def global-env (add-clojure-fns (new-env)))
 
 (defn evals
   ""
