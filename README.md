@@ -8,8 +8,7 @@ Usage
 Only small subset has been implemented so far. However, you can already play
 with the `evals` function :)
 
-```
-clojure
+```clojure
 (use 'slang.core)
 (evals '(def x 42))
 (evals '(def id (fun (x) x)))
