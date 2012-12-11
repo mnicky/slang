@@ -13,10 +13,8 @@ with the `evals` function :)
 
 (evals '(def ans 42))
 ;=> 42
-
 (evals '(def second (fun (x y) y)))
 ;=> #<some-fn-describing-string>
-
 (evals '(second 1 ans))
 ;=> 42
 
