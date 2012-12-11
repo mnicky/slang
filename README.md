@@ -22,11 +22,17 @@ with the `evals` function :)
 
 
 ;; or more advanced things like:
+
 (evals '(def comp1 (fun (f g) (fun (x) (f (g x))))))
+
 (evals '(def partial1 (fun (f arg1) (fun (arg2) (f arg1 arg2)))))
+
 (evals '(def plus7 (partial1 + 7)))
+
 (evals '(def mul10 (partial1 * 10)))
+
 (evals '(def plus_7mul10 (comp1 plus7 mul10)))
+
 (evals '(plus_7mul10 99))
 ;=> 997
 ```
