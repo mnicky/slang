@@ -34,11 +34,16 @@
 
 (defn add-clojure-binds
   "Add bindings for a few clojure functions to environment 'env' and return it."
-  [env]
-  (doseq [binds {'+ +, '- -, '* *, '/ /, '= =, '< <, '> >}]
+  ([]
+    (add-clojure-binds (new-env)))
+  ([env]
+  (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >=
+                 'car first 'cdr rest 'cons cons 'list? list? 'symbol? symbol?
+                 'print println}]
     (bind (key binds) (val binds) env))
-  env)
+  env))
 
+;; global environment
 (defonce global-env (add-clojure-binds (new-env)))
 
 (defn evals
@@ -58,7 +63,8 @@
       :else                  (let [exprs (doall (map #(evals % env) exp))]                      ;; (funcname exprs...)
                                (apply (first exprs) (rest exprs))))))
 
-
+;; add evals to the environment
+(bind 'evals evals global-env)
 
 ;; design proposal? ---------------
 (comment
