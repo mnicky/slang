@@ -84,8 +84,8 @@
 
 (for (i 1 10)
   (do
-    (print x.a)
-    (def y (struct))))
+    (def y i)
+    (print y)))
 
 (def max
   (fn (a b)
