@@ -3,16 +3,18 @@
 (def third (comp first next next))
 
 (defn new-env
-  ""
+  "Create a new environment containing 'vals' binded to 'syms' and
+  having 'env' as its outer environment."
   ([]
     (new-env [] []))
-  ([vars args]
-    (new-env vars args nil))
-  ([vars args env]
-    (atom (merge {:outer-env env} (zipmap vars args)))))
+  ([syms vals]
+    (new-env syms vals nil))
+  ([syms vals env]
+    (atom (merge {:outer-env env} (zipmap syms vals)))))
 
-(defn find-binding
-  ""
+(defn figure
+  "Resolve 'sym' in the environment 'env' and its outer environments and
+  return its value or nil if not found."
   [sym env]
   (when env
     (let [val (get @env sym :not-found)]
@@ -20,32 +22,37 @@
         (recur sym (get @env :outer-env))
         val))))
 
-(defn add-binding
-  ""
+(defn bind
+  "Bind 'sym' to the value 'val' in the environment 'env' and return 'val'."
   [sym val env]
   (sym (swap! env assoc sym val)))
 
+(defn unbind
+  "Remove binding for 'sym' from the environment 'env'."
+  [sym env]
+  (swap! env dissoc sym))
+
 (defn add-clojure-fns
-  ""
+  "Add bindings for a few clojure functions to environment 'env' and return it."
   [env]
   (doseq [fns {'+ +, '- -, '* *, '/ /, '= =, '< <, '> >}]
-    (add-binding (key fns) (val fns) env))
+    (bind (key fns) (val fns) env))
   env)
 
 (defonce global-env (add-clojure-fns (new-env)))
 
 (defn evals
-  ""
+  "Evaluate expression 'exp' in the environment 'env'."
   ([exp]
     (evals exp global-env))
   ([exp env]
     (cond
-      (symbol? exp)          (find-binding exp env)
+      (symbol? exp)          (figure exp env)
       (not (list? exp))      exp
       (= 'quote (first exp)) (second exp)                                                       ;; (quote exp)
       (= 'if (first exp))    (let [[test then else] (rest exp)]                                 ;; (if test then else)
                                (evals (if (evals test env) then else) env))
-      (= 'def (first exp))   (add-binding (second exp) (evals (third exp) env) env)             ;; (def name val)
+      (= 'def (first exp))   (bind (second exp) (evals (third exp) env) env)             ;; (def name val)
       (= 'do (first exp))    (last (map #(evals % env) (rest exp)))                             ;; (do exp...)
       (= 'fun (first exp))   (fn [& args] (evals (third exp) (new-env (second exp) args env)))  ;; (fun (vars...) expr)
       :else                  (let [exprs (doall (map #(evals % env) exp))]                      ;; (funcname exprs...)
