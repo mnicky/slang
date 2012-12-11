@@ -2,6 +2,6 @@
 
 Small language with Lisp-like syntax.
 
-Copyright © 2012 [Mnicky](http://mnicky.github.com)
+Copyright © 2012 Mnicky ([mnicky.github.com](http://mnicky.github.com))
 
-Distributed under [LGPL 2.1](http://www.gnu.org/licenses/lgpl-2.1.html).
+Distributed under the [MIT license](http://opensource.org/licenses/MIT).
