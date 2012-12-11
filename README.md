@@ -8,7 +8,7 @@ Usage
 Only small subset has been implemented so far. However, you can already play
 with the `evals` function :)
 
-```scheme
+```clojure
 (use 'slang.core)
 
 (evals '(def ans 42))
