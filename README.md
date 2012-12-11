@@ -21,8 +21,7 @@ with the `evals` function :)
 ;=> 42
 
 
-;; or more advanced things like:
-
+;; or more advanced things like this:
 (evals '(def comp1 (fun (f g) (fun (x) (f (g x))))))
 
 (evals '(def partial1 (fun (f arg1) (fun (arg2) (f arg1 arg2)))))
