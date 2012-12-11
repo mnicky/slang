@@ -1,8 +1,6 @@
 # slang
 
-**[under construction]**
-
-Small imperative language using s-expressions.
+Small language with Lisp-like syntax.
 
 Copyright © 2012 [Mnicky](http://mnicky.github.com)
 
