@@ -32,14 +32,14 @@
   [sym env]
   (swap! env dissoc sym))
 
-(defn add-clojure-fns
+(defn add-clojure-binds
   "Add bindings for a few clojure functions to environment 'env' and return it."
   [env]
   (doseq [fns {'+ +, '- -, '* *, '/ /, '= =, '< <, '> >}]
     (bind (key fns) (val fns) env))
   env)
 
-(defonce global-env (add-clojure-fns (new-env)))
+(defonce global-env (add-clojure-binds (new-env)))
 
 (defn evals
   "Evaluate expression 'exp' in the environment 'env'."
