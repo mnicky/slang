@@ -28,11 +28,11 @@
 (defn add-clojure-fns
   ""
   [env]
-  (doseq [fns {'+ +, '- -, '* *, '/ /, 'T true, 'F false}]
+  (doseq [fns {'+ +, '- -, '* *, '/ /, '= =, '< <, '> >}]
     (add-binding (key fns) (val fns) env))
   env)
 
-(def global-env (add-clojure-fns (new-env)))
+(defonce global-env (add-clojure-fns (new-env)))
 
 (defn evals
   ""
@@ -42,13 +42,13 @@
     (cond
       (symbol? exp)          (find-binding exp env)
       (not (list? exp))      exp
-      (= 'quote (first exp)) (second exp)                                                         ;; (quote exp)
-      (= 'if (first exp))    (let [[test then else] (rest exp)]                                   ;; (if test then else)
+      (= 'quote (first exp)) (second exp)                                                       ;; (quote exp)
+      (= 'if (first exp))    (let [[test then else] (rest exp)]                                 ;; (if test then else)
                                (evals (if (evals test env) then else) env))
-      (= 'def (first exp))   (add-binding (second exp) (evals (third exp) env) env)               ;; (def name val)
-      (= 'do (first exp))    (last (map #(evals % env) (rest exp)))                               ;; (do exp...)
-      (= 'fun (first exp))   (fn [& args] (evals (third exp) (new-env (second exp), args, env)))  ;; (fun (vars...) expr)
-      :else                  (let [exprs (doall (map #(evals % env) exp))]                        ;; (funcname exprs...)
+      (= 'def (first exp))   (add-binding (second exp) (evals (third exp) env) env)             ;; (def name val)
+      (= 'do (first exp))    (last (map #(evals % env) (rest exp)))                             ;; (do exp...)
+      (= 'fun (first exp))   (fn [& args] (evals (third exp) (new-env (second exp) args env)))  ;; (fun (vars...) expr)
+      :else                  (let [exprs (doall (map #(evals % env) exp))]                      ;; (funcname exprs...)
                                (apply (first exprs) (rest exprs))))))
 
 
