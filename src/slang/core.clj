@@ -59,6 +59,9 @@
 
 
 (comment
+; design proposal?
+
+(quote w)
 
 (def s "string")
 (def n 10)
@@ -67,22 +70,29 @@
 (def y (struct ()))
 (def z (struct))
 
-(set y.a 20)              ;;  or  (set y a 20)  ??
-(set y.b 30)
+(def y.a 20)
+(def y.b 30)
 
-(print x.a)               ;;  or  (print (get x a))  ??
+(do (def a 1)
+    (def b 2)
+    (+ a b))
+
+(print y.a)
 
 (print (= x.a y.a))
 (print (= x y))
 
-(for (i 1 10)           ;; or  (for [i 1 10]...)  ??
-  (print x.a)
-  (def y (struct)))
+(for (i 1 10)
+  (do
+    (print x.a)
+    (def y (struct))))
 
-(def ahoj (fn (a b)
-            (if (> a 0)
-              (ahoj 10 b))))
+(def max
+  (fn (a b)
+    (if (> a b)
+      a
+      b)))
 
-(ahoj 10 x)
+(max n 20)
 
 )
