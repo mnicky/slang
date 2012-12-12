@@ -33,11 +33,11 @@ with the `evals` function :)
 (evals '(do (bind (quote x) 144 &env)
             (lookup (quote x) &env)))
 ;=> 144
-(evals '(exists? (quote x) &env))
+(evals '(exists? (quote x) &env))            ;; executed in the current local environment
 ;=> true
-(evals '(exists? (quote x) (new-env)))
+(evals '(exists? (quote x) (new-env)))       ;; in a new empty local environment
 ;=> false
-(evals '(exists? (quote x) (new-env &env)))
+(evals '(exists? (quote x) (new-env &env)))  ;; in a new local environment referencing the current one
 ;=> true
 (evals '(do (unbind (quote x) &env)
             (lookup (quote x) &env)))
@@ -48,13 +48,12 @@ with the `evals` function :)
                          (* 7 x))
                        28))))
 ;=> 196
-(evals '(evals (quote (do (def x 50) x))
+(evals '(evals (quote (do (def x 50) x))     ;; executed in a new local environment
                (new-env &env)))
 ;=> 50
 (evals 'x)
 ;=> nil
-(evals '(evals (quote (do (def x 202) x))
-               &env))
+(evals '(evals (quote (do (def x 202) x))))  ;; executed in the same environment
 ;=> 202
 (evals 'x)
 ;=> 202
