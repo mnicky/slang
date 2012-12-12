@@ -31,7 +31,8 @@
 (defn unbind
   "Remove binding for 'sym' from the environment 'env'."
   [sym env]
-  (swap! env dissoc sym))
+  (do (swap! env dissoc sym)
+      nil))
 
 (defn add-clojure-binds
   "Add bindings for a few clojure functions to environment 'env' and return it."
