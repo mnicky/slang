@@ -26,16 +26,38 @@ with the `evals` function :)
 (evals '(def plus7_mul10 (comp1 plus7 mul10)))
 (evals '(plus7_mul10 99))
 ;=> 997
+```
 
+```clojure
 ;; current local environment can be accessed via the &env variable:
-(evals '(lookup (quote x) &env))
-;=> nil
 (evals '(do (bind (quote x) 144 &env)
             (lookup (quote x) &env)))
 ;=> 144
+(evals '(exists? (quote x) &env))
+;=> true
+(evals '(exists? (quote x) (new-env)))
+;=> false
+(evals '(exists? (quote x) (new-env &env)))
+;=> true
 (evals '(do (unbind (quote x) &env)
             (lookup (quote x) &env)))
 ;=> nil
+
+;; evals itself can be accessed from the language as well:
+(evals '(evals (quote ((fun (x)
+                         (* 7 x))
+                       28))))
+;=> 196
+(evals '(evals (quote (do (def x 50) x))
+               (new-env &env)))
+;=> 50
+(evals 'x)
+;=> nil
+(evals '(evals (quote (do (def x 202) x))
+               &env))
+;=> 202
+(evals 'x)
+;=> 202
 ```
 
 Copyright © 2012 Mnicky ([mnicky.github.com](http://mnicky.github.com))
