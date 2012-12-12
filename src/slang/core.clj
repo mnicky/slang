@@ -13,7 +13,7 @@
   ([syms vals env]
     (atom (merge {:outer-env env} (zipmap syms vals)))))
 
-(defn figure
+(defn lookup
   "Resolve 'sym' in the environment 'env' and its outer environments and
   return its value or nil if not found."
   [sym env]
@@ -41,7 +41,7 @@
   ([env]
   (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >=
                  'car first 'cdr rest 'cons cons 'list? list? 'symbol? symbol?
-                 'new-env new-env 'figure figure 'bind bind 'unbind unbind
+                 'new-env new-env 'lookup lookup 'bind bind 'unbind unbind
                  'print println}]
     (bind (key binds) (val binds) env))
   env))
@@ -57,7 +57,7 @@
     ;(bind '&exp exp env) ;; will this be useful with macros?
     (cond
       (= '&env exp)     env               ;; the environment itself ;)
-      (symbol? exp)     (figure exp env)  ;; variable reference
+      (symbol? exp)     (lookup exp env)  ;; variable reference
       (not (list? exp)) exp               ;; constant literal
       :else (case (first exp)
               quote (second exp)                                                          ;; (quote exp)

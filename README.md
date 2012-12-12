@@ -28,13 +28,13 @@ with the `evals` function :)
 ;=> 997
 
 ;; current local environment can be accessed via the &env variable:
-(evals '(figure (quote x) &env))
+(evals '(lookup (quote x) &env))
 ;=> nil
 (evals '(do (bind (quote x) 144 &env)
-            (figure (quote x) &env)))
+            (lookup (quote x) &env)))
 ;=> 144
 (evals '(do (unbind (quote x) &env)
-            (figure (quote x) &env)))
+            (lookup (quote x) &env)))
 ;=> nil
 ```
 
