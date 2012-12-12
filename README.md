@@ -27,7 +27,7 @@ with the `evals` function :)
 (evals '(plus7_mul10 99))
 ;=> 997
 
-;; the environment can be explicitly accessed via the &env variable:
+;; current local environment can be accessed via the &env variable:
 (evals '(figure (quote x) &env))
 ;=> nil
 (evals '(do (bind (quote x) 144 &env)
