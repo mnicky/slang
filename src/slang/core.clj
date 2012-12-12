@@ -55,19 +55,21 @@
   ([exp env]
     ;(bind '&exp exp env) ;; will this be useful with macros?
     (cond
-      (= '&env exp)          env                                                                         ;; environment itself ;)
-      (symbol? exp)          (figure exp env)                                                            ;; variable reference
-      (not (list? exp))      exp                                                                         ;; constant literals
-      (= 'quote (first exp)) (second exp)                                                                ;; (quote exp)
-      (= 'if (first exp))    (evals (if (evals (second exp) env) (third exp) (fourth exp)) env)          ;; (if test then else)
-      (= 'def (first exp))   (bind (second exp) (evals (third exp) env) env)                             ;; (def name val)
-      (= 'do (first exp))    (last (map #(evals % env) (rest exp)))                                      ;; (do exp...)
-      (= 'fun (first exp))   (fn [& args] (evals (third exp) (new-env (second exp) args env)))           ;; (fun (vars...) expr)
-      :else                  (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))  ;; (funcname exprs...)
+      (= '&env exp)     env               ;; the environment itself ;)
+      (symbol? exp)     (figure exp env)  ;; variable reference
+      (not (list? exp)) exp               ;; constant literal
+      :else (case (first exp)
+              quote (second exp)                                                          ;; (quote exp)
+              if    (evals (if (evals (second exp) env) (third exp) (fourth exp)) env)    ;; (if test then else)
+              def   (bind (second exp) (evals (third exp) env) env)                       ;; (def name val)
+              do    (last (map #(evals % env) (rest exp)))                                ;; (do exp...)
+              fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (vars...) expr)
+              (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname exprs...)
 
 
 ;; add evals to the environment
 (bind 'evals evals global-env)
+
 
 ;; design proposal? ---------------
 (comment
