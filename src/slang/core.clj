@@ -7,11 +7,22 @@
   "Create a new environment containing 'vals' binded to 'syms' and
   having 'env' as its outer environment."
   ([]
-    (new-env [] []))
+    (new-env nil))
+  ([env]
+    (new-env [] [] env))
   ([syms vals]
     (new-env syms vals nil))
   ([syms vals env]
     (atom (merge {:outer-env env} (zipmap syms vals)))))
+
+(defn exists?
+  "Return whether the 'sym' is bound to some value in the environment 'env'."
+  [sym env]
+  (if env
+    (if (contains? @env sym)
+      true
+      (recur sym (get @env :outer-env)))
+    false))
 
 (defn lookup
   "Resolve 'sym' in the environment 'env' and its outer environments and
@@ -26,13 +37,12 @@
 (defn bind
   "Bind 'sym' to the value 'val' in the environment 'env' and return 'val'."
   [sym val env]
-  (sym (swap! env assoc sym val)))
+  (swap! env assoc sym val))
 
 (defn unbind
   "Remove binding for 'sym' from the environment 'env'."
   [sym env]
-  (do (swap! env dissoc sym)
-      nil))
+  (swap! env dissoc sym))
 
 (defn add-clojure-binds
   "Add bindings for a few clojure functions to environment 'env' and return it."
@@ -42,7 +52,7 @@
   (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >=
                  'car first 'cdr rest 'cons cons 'list? list? 'symbol? symbol?
                  'new-env new-env 'lookup lookup 'bind bind 'unbind unbind
-                 'print println}]
+                 'exists? exists? 'print println}]
     (bind (key binds) (val binds) env))
   env))
 
@@ -62,7 +72,7 @@
       :else (case (first exp)
               quote (second exp)                                                          ;; (quote exp)
               if    (evals (if (evals (second exp) env) (third exp) (fourth exp)) env)    ;; (if test then else)
-              def   (bind (second exp) (evals (third exp) env) env)                       ;; (def name val)
+              def   ((second exp) (bind (second exp) (evals (third exp) env) env))        ;; (def name val)
               do    (last (map #(evals % env) (rest exp)))                                ;; (do exp...)
               fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (vars...) expr)
               (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname exprs...)
