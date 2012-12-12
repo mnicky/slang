@@ -1,4 +1,4 @@
-# slang
+# Slang
 
 Small language with Lisp-like syntax. Implemented in [Clojure](http://clojure.org).
 
@@ -27,6 +27,8 @@ with the `evals` function :)
 (evals '(plus7_mul10 99))
 ;=> 997
 ```
+
+It is possible to manipulate environments directly from the Slang:
 
 ```clojure
 ;; current local environment can be accessed via the &env variable:
