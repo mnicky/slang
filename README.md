@@ -26,6 +26,16 @@ with the `evals` function :)
 (evals '(def plus7_mul10 (comp1 plus7 mul10)))
 (evals '(plus7_mul10 99))
 ;=> 997
+
+;; the environment can be explicitly accessed via the &env variable:
+(evals '(figure (quote x) &env))
+;=> nil
+(evals '(do (bind (quote x) 144 &env)
+            (figure (quote x) &env)))
+;=> 144
+(evals '(do (unbind (quote x) &env)
+            (figure (quote x) &env)))
+;=> nil
 ```
 
 Copyright © 2012 Mnicky ([mnicky.github.com](http://mnicky.github.com))
