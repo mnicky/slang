@@ -1,6 +1,7 @@
 (ns slang.core)
 
 (def third (comp first next next))
+(def fourth (comp first next next next))
 
 (defn new-env
   "Create a new environment containing 'vals' binded to 'syms' and
@@ -52,16 +53,15 @@
     (evals exp global-env))
   ([exp env]
     (cond
-      (symbol? exp)          (figure exp env)
-      (not (list? exp))      exp
-      (= 'quote (first exp)) (second exp)                                                       ;; (quote exp)
-      (= 'if (first exp))    (let [[test then else] (rest exp)]                                 ;; (if test then else)
-                               (evals (if (evals test env) then else) env))
-      (= 'def (first exp))   (bind (second exp) (evals (third exp) env) env)             ;; (def name val)
-      (= 'do (first exp))    (last (map #(evals % env) (rest exp)))                             ;; (do exp...)
-      (= 'fun (first exp))   (fn [& args] (evals (third exp) (new-env (second exp) args env)))  ;; (fun (vars...) expr)
-      :else                  (let [exprs (doall (map #(evals % env) exp))]                      ;; (funcname exprs...)
-                               (apply (first exprs) (rest exprs))))))
+      (symbol? exp)          (figure exp env)                                                            ;; variable reference
+      (not (list? exp))      exp                                                                         ;; constant literals
+      (= 'quote (first exp)) (second exp)                                                                ;; (quote exp)
+      (= 'if (first exp))    (evals (if (evals (second exp) env) (third exp) (fourth exp)) env)          ;; (if test then else)
+      (= 'def (first exp))   (bind (second exp) (evals (third exp) env) env)                             ;; (def name val)
+      (= 'do (first exp))    (last (map #(evals % env) (rest exp)))                                      ;; (do exp...)
+      (= 'fun (first exp))   (fn [& args] (evals (third exp) (new-env (second exp) args env)))           ;; (fun (vars...) expr)
+      :else                  (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))  ;; (funcname exprs...)
+
 
 ;; add evals to the environment
 (bind 'evals evals global-env)
