@@ -40,6 +40,7 @@
   ([env]
   (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >=
                  'car first 'cdr rest 'cons cons 'list? list? 'symbol? symbol?
+                 'new-env new-env 'figure figure 'bind bind 'unbind unbind
                  'print println}]
     (bind (key binds) (val binds) env))
   env))
@@ -52,7 +53,9 @@
   ([exp]
     (evals exp global-env))
   ([exp env]
+    ;(bind '&exp exp env) ;; will this be useful with macros?
     (cond
+      (= '&env exp)          env                                                                         ;; environment itself ;)
       (symbol? exp)          (figure exp env)                                                            ;; variable reference
       (not (list? exp))      exp                                                                         ;; constant literals
       (= 'quote (first exp)) (second exp)                                                                ;; (quote exp)
