@@ -1,5 +1,88 @@
 (ns slang.core)
 
+;;== garbage collector ======================================================
+
+(defn empty-heap-el
+  "Return new empty element of the heap iwth the giben position."
+  [idx]
+  {:type nil :val nil :marked false :idx idx})
+
+(defn make-heap
+  "Return heap of the specified 'size'."
+  ([]
+    (make-heap 100))
+  ([size]
+    (atom
+      {:free (into clojure.lang.PersistentQueue/EMPTY (range 0 size))
+       :mem (into [] (map empty-heap-el (range size)))
+       :size size})))
+
+;; global heap
+(defonce global-heap (make-heap))
+
+(defn mark
+  "Mark all elements of the 'heap' that are referenced from the environment
+  'env' or some of its outer environments."
+  [env heap]
+  (when env
+    (swap! heap (fn [h] (reduce #(assoc-in %1 [:mem %2 :marked] true) h (vals (dissoc @env :outer-env)))))
+    (recur (:outer-env env) heap)))
+
+(defn sweep-idx
+  "Return 'heap' with the element at index 'idx' sweeped, if not marked."
+  [heap idx]
+  (if (nil? (get-in heap [:mem idx :type]))
+    heap
+    (if (true? (get-in heap [:mem idx :marked]))
+      (assoc-in heap [:mem idx :marked] false)
+      (-> heap (assoc-in [:mem idx] (empty-heap-el idx))
+               (assoc :free (conj (:free heap) idx))))))
+
+(defn sweep
+  "Sweer all non marked elements from the 'heap'."
+  [heap]
+  (swap! heap #(reduce sweep-idx % (range (:size %)))))
+
+(defn gc
+  "Perform garbage collection on 'heap' using information about references in the environment 'env'."
+  [env heap]
+  (mark env heap)
+  (sweep heap))
+
+(defn ensure-free-mem
+  "Ensure that 'heap' has free memory by performing gc if heap's full."
+  [env heap]
+  {:post [(not (empty? (:free @heap)))]}
+  (when (empty? (:free @heap))
+    (gc env heap)))
+
+(defn get-type
+  "Return the type of the value."
+  [val]
+  (if (coll? val) :coll :val))
+
+(defn put-on-heap
+  "Put value 'val' on the 'heap' in the environment 'env'."
+  ([val env]
+    (put-on-heap val env global-heap))
+  ([val env heap]
+    (ensure-free-mem env heap)
+    (let [free-slot (peek (:free @heap))
+          type (get-type val)]
+      (swap! heap #(-> % (assoc-in [:mem free-slot :val] val)
+                         (assoc-in [:mem free-slot :type] type)
+                         (update-in [:free] pop)))
+      free-slot)))
+
+(defn get-from-heap
+  "Return value from 'heap' by its reference index 'idx' or nil if not found."
+  ([idx]
+    (get-from-heap idx global-heap))
+  ([idx heap]
+    (get-in @heap [:mem idx :val])))
+
+;;== interpreter ============================================================
+
 (def third (comp first next next))
 (def fourth (comp first next next next))
 
@@ -29,15 +112,16 @@
   return its value or nil if not found."
   [sym env]
   (when env
-    (let [val (get @env sym :not-found)]
-      (if (= :not-found val)
+    (let [idx (get @env sym :not-found)]
+      (if (= :not-found idx)
         (recur sym (get @env :outer-env))
-        val))))
+        (get-from-heap idx)))))
 
 (defn bind
   "Bind 'sym' to the value 'val' in the environment 'env' and return 'val'."
   [sym val env]
-  (swap! env assoc sym val))
+  (swap! env assoc sym (put-on-heap val env))
+  val)
 
 (defn unbind
   "Remove binding for 'sym' from the environment 'env'."
@@ -72,7 +156,7 @@
       :else (case (first exp)
               quote (second exp)                                                          ;; (quote exp)
               if    (evals (if (evals (second exp) env) (third exp) (fourth exp)) env)    ;; (if test then else)
-              def   ((second exp) (bind (second exp) (evals (third exp) env) env))        ;; (def name val)
+              def   (bind (second exp) (evals (third exp) env) env)                       ;; (def name val)
               do    (last (map #(evals % env) (rest exp)))                                ;; (do exp...)
               fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (vars...) expr)
               (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname exprs...)
