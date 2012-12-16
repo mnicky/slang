@@ -66,6 +66,7 @@
   ([val env]
     (put-on-heap val env global-heap))
   ([val env heap]
+    ;(println "--put-on-heap" val env "->" (peek (:free @heap)))
     (ensure-free-mem env heap)
     (let [free-slot (peek (:free @heap))
           type (get-type val)]
@@ -79,6 +80,7 @@
   ([idx]
     (get-from-heap idx global-heap))
   ([idx heap]
+    ;(println "--get-from-heap" idx "->" (get-in @heap [:mem idx :val]))
     (get-in @heap [:mem idx :val])))
 
 ;;== interpreter ============================================================
@@ -99,6 +101,7 @@
   "Resolve 'sym' in the environment 'env' and its outer environments and
   return its value or nil if not found."
   [sym env]
+  ;(println "--lookup" sym env "->" (get @env sym :not-found))
   (when env
     (let [idx (get @env sym :not-found)]
       (if (= :not-found idx)
@@ -108,6 +111,7 @@
 (defn bind
   "Bind 'sym' to the value 'val' in the environment 'env' and return 'val'."
   [sym val env]
+  ;(println "--bind" sym val env "->" val)
   (swap! env assoc sym (put-on-heap val env))
   val)
 
