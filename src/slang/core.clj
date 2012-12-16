@@ -18,7 +18,7 @@
        :size size})))
 
 ;; global heap
-(defonce global-heap (make-heap))
+(defonce global-heap (make-heap 100))
 
 (defn mark
   "Mark all elements of the 'heap' that are referenced from the environment
@@ -86,18 +86,6 @@
 (def third (comp first next next))
 (def fourth (comp first next next next))
 
-(defn new-env
-  "Create a new environment containing 'vals' binded to 'syms' and
-  having 'env' as its outer environment."
-  ([]
-    (new-env nil))
-  ([env]
-    (new-env [] [] env))
-  ([syms vals]
-    (new-env syms vals nil))
-  ([syms vals env]
-    (atom (merge {:outer-env env} (zipmap syms vals)))))
-
 (defn exists?
   "Return whether the 'sym' is bound to some value in the environment 'env'."
   [sym env]
@@ -127,6 +115,21 @@
   "Remove binding for 'sym' from the environment 'env'."
   [sym env]
   (swap! env dissoc sym))
+
+(defn new-env
+  "Create a new environment containing 'vals' binded to 'syms' and
+  having 'env' as its outer environment."
+  ([]
+    (new-env nil))
+  ([env]
+    (new-env [] [] env))
+  ([syms vals]
+    (new-env syms vals nil))
+  ([syms vals env]
+    (let [inner-env (atom {:outer-env env})]
+      (doseq [ref (zipmap syms vals)]
+        (bind (key ref) (val ref) inner-env))
+      inner-env)))
 
 (defn add-clojure-binds
   "Add bindings for a few clojure functions to environment 'env' and return it."
