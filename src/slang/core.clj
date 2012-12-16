@@ -26,7 +26,7 @@
   [env heap]
   (when env
     (swap! heap (fn [h] (reduce #(assoc-in %1 [:mem %2 :marked] true) h (vals (dissoc @env :outer-env)))))
-    (recur (:outer-env env) heap)))
+    (recur (:outer-env @env) heap)))
 
 (defn sweep-idx
   "Return 'heap' with the element at index 'idx' sweeped, if not marked."
