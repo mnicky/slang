@@ -20,16 +20,27 @@
 ;; global heap
 (defonce global-heap (make-heap 100))
 
+(defn mark-idx
+  "Mark element with given 'idx' on the 'heap'."
+  [idx heap]
+  (println ">>>" idx heap)
+  (swap! heap #(assoc-in % [:mem idx :marked] true))
+  (when (= :coll (get-in @heap [:mem idx :type]))
+    (doseq [field-idx (vals (get-in @heap [:mem idx :val]))]
+      (mark-idx field-idx heap))))
+
 (defn mark
   "Mark all elements of the 'heap' that are referenced from the environment
   'env' or some of its outer environments."
   [env heap]
   (when env
-    (swap! heap (fn [h] (reduce #(assoc-in %1 [:mem %2 :marked] true) h (vals (dissoc @env :outer-env)))))
+    (doseq [idx (vals (dissoc @env :outer-env))]
+      (mark-idx idx heap))
     (recur (:outer-env @env) heap)))
 
 (defn sweep-idx
-  "Return 'heap' with the element at index 'idx' sweeped, if not marked."
+  "Return 'heap' with the element at index 'idx' sweeped, if it's not marked
+  as referenced."
   [heap idx]
   (if (nil? (get-in heap [:mem idx :type]))
     heap
@@ -135,20 +146,49 @@
         (bind (key ref) (val ref) inner-env))
       inner-env)))
 
-(defn add-clojure-binds
-  "Add bindings for a few clojure functions to environment 'env' and return it."
+;; Structure type
+(defrecord Structure [])
+
+(defn getf
+  "Returns the value of the 'field' in given structure 'st'."
+  [st field]
+  (get-from-heap (get st field)))
+
+(defn setf
+  "Returns the structure 'st' with value of the given 'field' set to the 'val'.
+  The binding is done in the environment 'env'."
+  [st field val env]
+  (assoc st field (put-on-heap val env)))
+
+(defn new-struct
+  "Returns new empty structure."
+  []
+  (Structure.))
+
+;; printing the 'structure' type in the repl
+(defmethod print-method Structure
+  [st w]
+  (.write w "{")
+  (doseq [el (butlast st)] (.write w (str (key el) " " (get-from-heap (val el)) ", ")))
+  (when-let [last-el (last st)]
+    (.write w (str (key last-el) " " (get-from-heap (val last-el)))))
+  (.write w "}"))
+
+(defn with-init-binds
+  "Return the environment 'env' with some initial bindings added."
   ([]
-    (add-clojure-binds (new-env)))
+    (with-init-binds (new-env)))
   ([env]
   (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >=
                  'car first 'cdr rest 'cons cons 'list? list? 'symbol? symbol?
-                 'new-env new-env 'lookup lookup 'bind bind 'unbind unbind
-                 'exists? exists? 'print println}]
+                 'print println
+                 'new-env new-env 'lookup lookup 'bind bind 'unbind unbind 'exists? exists?
+                 'struct new-struct}]
     (bind (key binds) (val binds) env))
   env))
 
 ;; global environment
-(defonce global-env (add-clojure-binds (new-env)))
+(defonce global-env (with-init-binds (new-env)))
 
 (defn evals
   "Evaluate expression 'exp' in the environment 'env'."
@@ -164,6 +204,11 @@
               quote (second exp)                                                          ;; (quote exp)
               if    (evals (if (evals (second exp) env) (third exp) (fourth exp)) env)    ;; (if test then else)
               def   (bind (second exp) (evals (third exp) env) env)                       ;; (def name val)
+              get   (getf (lookup (second exp) env) (third exp))                          ;; (get structname fieldname)
+              set   (bind (second exp) (setf (lookup (second exp) env)                    ;; (set structname fieldname val)
+                                              (third exp)
+                                              (evals (fourth exp) env)
+                                              env) env)
               do    (last (map #(evals % env) (rest exp)))                                ;; (do exp...)
               fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (vars...) expr)
               (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname exprs...)
@@ -171,7 +216,6 @@
 
 ;; add evals to the environment
 (bind 'evals evals global-env)
-
 
 ;; design proposal? ---------------
 (comment
