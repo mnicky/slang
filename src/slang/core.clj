@@ -1,4 +1,6 @@
-(ns slang.core)
+(ns slang.core
+  (:gen-class)
+  (:require [clojure.java.io :as io]))
 
 ;;== garbage collector ======================================================
 
@@ -216,6 +218,40 @@
 
 ;; add evals to the environment
 (bind 'evals evals global-env)
+
+;;== repl etc. ==============================================================
+
+(defn safe-evals
+  "Evals that prints "
+  [exp]
+  (try
+    (evals exp)
+    (catch Exception e (.printStackTrace e))))
+
+(defn repl
+  "Run the repl."
+  []
+  (def ^:dynamic *exit-repl* false)
+  (bind 'exit #(do (alter-var-root #'*exit-repl* (constantly true)) "Bye!") global-env)
+  (println "This is Slang. Invoke (exit) to exit.")
+  (while (false? *exit-repl*)
+    (print "slang=> ")
+    (flush)
+    (println (safe-evals (read *in* false "Invoke (exit) to exit.")))))
+
+(defn exec-file
+  "Interpret the file with given 'path' (line by line)."
+  [path]
+  (with-open [r (io/reader path)]
+    (doseq [line (line-seq r)]
+      (evals (read-string line)))))
+
+(defn -main
+  "Interpret file (first argument) or run repl if no cmd line argument given."
+  [& args]
+  (if args
+    (exec-file (first args))
+    (repl)))
 
 ;; design proposal? ---------------
 (comment
