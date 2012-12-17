@@ -247,7 +247,8 @@
       (evals (read-string line)))))
 
 (defn -main
-  "Interpret file (first argument) or run repl if no cmd line argument given."
+  "Interpret file (path given as the first cmd argument) or run repl
+  if no cmd line argument given."
   [& args]
   (if args
     (exec-file (first args))
