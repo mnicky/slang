@@ -23,7 +23,6 @@
 (defn mark-idx
   "Mark element with given 'idx' on the 'heap'."
   [idx heap]
-  (println ">>>" idx heap)
   (swap! heap #(assoc-in % [:mem idx :marked] true))
   (when (= :coll (get-in @heap [:mem idx :type]))
     (doseq [field-idx (vals (get-in @heap [:mem idx :val]))]
@@ -58,7 +57,8 @@
   "Perform garbage collection on 'heap' using information about references in the environment 'env'."
   [env heap]
   (mark env heap)
-  (sweep heap))
+  (sweep heap)
+  'Done.)
 
 (defn ensure-free-mem
   "Ensure that 'heap' has free memory by performing gc if heap's full."
