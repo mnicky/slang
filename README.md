@@ -124,7 +124,7 @@ It is possible to manipulate environments directly from the Slang:
 ```clojure
 ;; current local environment can be accessed via the &env variable:
 (do (bind (quote x) 144 &env)
-          (lookup (quote x) &env))
+    (lookup (quote x) &env))
 ;=> 144
 (exists? (quote x) &env)            ;; executed in the current local environment
 ;=> true
@@ -133,7 +133,7 @@ It is possible to manipulate environments directly from the Slang:
 (exists? (quote x) (new-env &env))  ;; in a new local environment referencing the current one
 ;=> true
 (do (unbind (quote x) &env)
-            (lookup (quote x) &env))
+    (lookup (quote x) &env))
 ;=> nil
 
 ;; interpreter itself can be accessed from the language as well, via the 'evals' function:
