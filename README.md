@@ -58,8 +58,8 @@ Syntax
 
 ## Useful functions
 
- * Math & logical: `+`, `-`, `*`, `/`, `=`, `<`, `>`, `<=`, `>=`
- * Lists: `car`, `cdr`, `cons`, `list?`, `symbol?`
+ * Math etc.: `+`, `-`, `*`, `/`, `=`, `<`, `>`, `<=`, `>=`
+ * Lists etc.: `car`, `cdr`, `cons`, `list?`, `symbol?`
  * Direct environment manipulation: `new-env`, `lookup`, `bind`, `unbind`, `exists?`
  * Other: `print`, `evals`
 
