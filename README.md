@@ -13,7 +13,7 @@ You can build Slang from source:
 * in the cloned repository, run: `lein uberjar`. This will create a _.jar_ file, named _slang-VERSION-standalone.jar_, in the _target/_ directory of the cloned repository.
 
 <br>
-Or you can download already built _.jar_ file: [slang-0.1.0.jar](https://raw.github.com/mnicky/slang/bin/slang-0.1.0.jar)
+Or you can download already built _.jar_ file: [slang-0.1.1-standalone.jar](https://raw.github.com/mnicky/slang/bin/slang-0.1.1-standalone.jar)
 
 Usage
 =====
