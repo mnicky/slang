@@ -220,7 +220,7 @@
                                    (list (first args) (inc (second args)) (third args))))
                         (evals (third exp) local-env)))
               fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (args...) expr)
-              (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname exprs...)
+              (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname args...)
 
 ;; add evals to the environment
 (bind 'evals evals global-env)

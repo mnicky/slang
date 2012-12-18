@@ -36,13 +36,13 @@ Syntax
 
 `(get structname fieldname)` - Returns the value of the given field in the specified structure.
 
-`(do exprs...)` - Runs all the expresions and returns the value of the last one.
+`(do exprs...)` - Evaluates all the expresions and returns the value of the last one.
 
 `(for (i 1 10) expr)` - For cycle (runs the expression in the new local environment).
 
 `(fun (args...) expr)` - Definition of the function.
 
-`(funcname exprs...)` - Invocation of the function.
+`(funcname args...)` - Invocation of the function.
 
 
 ## Literals
