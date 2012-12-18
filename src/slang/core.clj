@@ -212,13 +212,16 @@
                                               (evals (fourth exp) env)
                                               env) env)
               do    (last (map #(evals % env) (rest exp)))                                ;; (do exprs...)
-              for   (loop [local-env (new-env env) args (second exp)]                     ;; (for (i 1 10) expr)
-                      (bind (first args) (second args) local-env)
-                      (if (< (lookup (first args) local-env) (third args))
-                        (do (evals (third exp) local-env)
-                            (recur local-env
-                                   (list (first args) (inc (second args)) (third args))))
-                        (evals (third exp) local-env)))
+              for   (let [local-env (new-env env)                                         ;; (for (var init end) expr)
+                          [var init end] (second exp)
+                          init (evals init env)
+                          end (evals end env)]
+                      (loop [actual-value init]
+                        (bind var actual-value local-env)
+                        (if (< (lookup var local-env) end)
+                          (do (evals (third exp) local-env)
+                              (recur (inc actual-value)))
+                          (evals (third exp) local-env))))
               fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (args...) expr)
               (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname args...)
 
