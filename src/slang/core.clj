@@ -231,7 +231,7 @@
 ;;== repl etc. ==============================================================
 
 (defn safe-evals
-  "Evals that prints "
+  "Evals that prints stack trace on exception."
   [exp]
   (try
     (evals exp)
