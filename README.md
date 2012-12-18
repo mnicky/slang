@@ -61,7 +61,7 @@ Syntax
  * Math etc.: `+`, `-`, `*`, `/`, `=`, `<`, `>`, `<=`, `>=`
  * Lists etc.: `car`, `cdr`, `cons`, `list?`, `symbol?`
  * Direct environment manipulation: `new-env`, `lookup`, `bind`, `unbind`, `exists?`
- * Other: `print`, `evals`
+ * Other: `print`, `evals`, `exec-file`
 
 <br>
 See [core.clj](https://github.com/mnicky/slang/blob/gc/src/slang/core.clj) for more information.

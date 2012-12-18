@@ -255,6 +255,8 @@
     (doseq [line (line-seq r)]
       (evals (read-string line)))))
 
+(bind 'exec-file exec-file global-env)
+
 (defn -main
   "Interpret file (path given as the first cmd argument) or run repl
   if no cmd line argument given."
