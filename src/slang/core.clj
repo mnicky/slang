@@ -181,7 +181,7 @@
   ([]
     (with-init-binds (new-env)))
   ([env]
-  (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >=
+  (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >= 'and and 'or or
                  'car first 'cdr rest 'cons cons 'list? list? 'symbol? symbol?
                  'print println
                  'new-env new-env 'lookup lookup 'bind bind 'unbind unbind 'exists? exists?
@@ -211,7 +211,7 @@
                                               (third exp)
                                               (evals (fourth exp) env)
                                               env) env)
-              do    (last (map #(evals % env) (rest exp)))                                ;; (do exp...)
+              do    (last (map #(evals % env) (rest exp)))                                ;; (do exprs...)
               for   (loop [local-env (new-env env) args (second exp)]                     ;; (for (i 1 10) expr)
                       (bind (first args) (second args) local-env)
                       (if (< (lookup (first args) local-env) (third args))
@@ -219,7 +219,7 @@
                             (recur local-env
                                    (list (first args) (inc (second args)) (third args))))
                         (evals (third exp) local-env)))
-              fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (vars...) expr)
+              fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (args...) expr)
               (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname exprs...)
 
 ;; add evals to the environment
