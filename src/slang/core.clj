@@ -181,7 +181,7 @@
   ([]
     (with-init-binds (new-env)))
   ([env]
-  (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >= 'and and 'or or
+  (doseq [binds {'+ + '- - '* * '/ / '= = '< < '> > '<= <= '>= >=
                  'car first 'cdr rest 'cons cons 'list? list? 'symbol? symbol?
                  'print println
                  'new-env new-env 'lookup lookup 'bind bind 'unbind unbind 'exists? exists?
