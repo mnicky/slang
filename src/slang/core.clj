@@ -239,11 +239,11 @@
   []
   (def ^:dynamic *exit-repl* false)
   (bind 'exit #(do (alter-var-root #'*exit-repl* (constantly true)) "Bye!") global-env)
-  (println "This is Slang. Invoke (exit) to exit.")
+  (println "This is Slang. Invoke (exit) to quit the repl.")
   (while (false? *exit-repl*)
     (print "slang=> ")
     (flush)
-    (println (safe-evals (read *in* false "Invoke (exit) to exit.")))))
+    (println (safe-evals (read *in* false "Invoke (exit) to quit the repl.")))))
 
 (defn exec-file
   "Interpret the file with given 'path' (line by line)."
