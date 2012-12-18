@@ -28,7 +28,7 @@ Syntax
 
 ## Forms
 
-`(quote expr)` - Prevents the evaluation of _expr_.
+`(quote expr)` - Quotation. Prevents the evaluation of _expr_.
 
 `(if test then else)` - Ordinary _IF_ clause, returning the value of _then_ or _else_.
 
