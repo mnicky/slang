@@ -6,10 +6,14 @@ Small language with Lisp-like syntax. Implemented in [Clojure](http://clojure.or
 Installation
 ============
 
+You can build Slang from source:
+
 * install [leiningen](https://github.com/technomancy/leiningen#leiningen)
 * clone this repository: `git clone -b gc https://github.com/mnicky/slang`
-* in the cloned repository, run: `lein uberjar`. This will create the _.jar_ file, named _slang-VERSION-standalone.jar_, in the _target/_ directory of the cloned repository.
+* in the cloned repository, run: `lein uberjar`. This will create a _.jar_ file, named _slang-VERSION-standalone.jar_, in the _target/_ directory of the cloned repository.
 
+<br>
+Or you can download already built _.jar_ file: [slang-0.1.0.jar](https://raw.github.com/mnicky/slang/bin/slang-0.1.0.jar)
 
 Usage
 =====
@@ -24,11 +28,11 @@ Syntax
 
 ## Forms
 
-`(quote expr)` - Prevents the evaluation of _expr_.
+`(quote expr)` - Quotation. Prevents the evaluation of _expr_.
 
-`(if test then else)` - Ordinary if clause.
+`(if test then else)` - Ordinary _IF_ clause, returning the value of _then_ or _else_.
 
-`(def name val)` - Binds the value _val_ to the _name_ in the current environment.
+`(def name val)` - Binds the value _val_ to the _name_ in the current environment. Used to define names for values/functions.
 
 `(struct)` - Returns new structure.
 
@@ -38,24 +42,26 @@ Syntax
 
 `(do exprs...)` - Evaluates all the expresions and returns the value of the last one.
 
-`(for (i 1 10) expr)` - For cycle (runs the expression in the new local environment).
+`(for (var init end) expr)` - Cycle. The _var_ will be bound to values in range [init; end]. Creates new local environment.
 
-`(fun (args...) expr)` - Definition of the function.
+`(fun (args...) expr)` - Function. Creates new local environment.
 
-`(funcname args...)` - Invocation of the function.
+`(funcname args...)` - Function invocation.
 
 
 ## Literals
  * numbers: `2`, `2.3`
  * strings: `"Hello"`
+ * symbols: `(quote x)`
  * booleans: `true`, `false`
  * non-defined value: `nil`
 
 ## Useful functions
 
- * Math & logical: `+`, `-`, `*`, `/`, `=`, `<`, `>`, `<=`, `>=`, `and`, `or`
- * Lists: `car`, `cdr`, `cons`, `list?`, `symbol?`, `print`
+ * Math etc.: `+`, `-`, `*`, `/`, `=`, `<`, `>`, `<=`, `>=`
+ * Lists etc.: `car`, `cdr`, `cons`, `list?`, `symbol?`
  * Direct environment manipulation: `new-env`, `lookup`, `bind`, `unbind`, `exists?`
+ * Other: `print`, `evals`
 
 <br>
 See [core.clj](https://github.com/mnicky/slang/blob/gc/src/slang/core.clj) for more information.
@@ -63,16 +69,20 @@ See [core.clj](https://github.com/mnicky/slang/blob/gc/src/slang/core.clj) for m
 Examples
 ========
 
+Variables and functions:
+
 ```clojure
-;; Variables and functions:
 (def ans 42)
 ;=> 42
 (def second (fun (x y) y))
 ;=> #<some-fn-describing-string>
 (second "give me" ans)
 ;=> 42
+```
 
-;; Structures:
+Structures:
+
+```clojure
 (def person (struct))
 ;=> {}
 (set person name "John Doe")
@@ -81,8 +91,11 @@ Examples
 ;=> {age 42, name John Doe}
 (get person age)
 ;=> 42
+```
 
-;; Flow control:
+Flow control:
+
+```clojure
 (if (= 1 2) "This is weird world!" "Everything's ok.")
 ;=> Everything's ok.
 (for (i 1 5) (do (print i) "returned value"))
@@ -92,13 +105,16 @@ Examples
 ;4
 ;5
 ;=> returned value
+```
 
-;; Higher order functions:
-(def comp1 (fun (f g) (fun (x) (f (g x)))))
+Higher order functions:
+
+```clojure
+(def compose1 (fun (f g) (fun (x) (f (g x)))))
 (def partial1 (fun (f arg1) (fun (arg2) (f arg1 arg2))))
 (def plus7 (partial1 + 7))
 (def mul10 (partial1 * 10))
-(def plus7_mul10 (comp1 plus7 mul10))
+(def plus7_mul10 (compose1 plus7 mul10))
 (plus7_mul10 99)
 ;=> 997
 ```
