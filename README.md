@@ -52,14 +52,16 @@ Syntax
 ## Literals
  * numbers: `2`, `2.3`
  * strings: `"Hello"`
+ * symbols: `(quote x)`
  * booleans: `true`, `false`
  * non-defined value: `nil`
 
 ## Useful functions
 
  * Math & logical: `+`, `-`, `*`, `/`, `=`, `<`, `>`, `<=`, `>=`
- * Lists: `car`, `cdr`, `cons`, `list?`, `symbol?`, `print`
+ * Lists: `car`, `cdr`, `cons`, `list?`, `symbol?`
  * Direct environment manipulation: `new-env`, `lookup`, `bind`, `unbind`, `exists?`
+ * Other: `print`, `evals`
 
 <br>
 See [core.clj](https://github.com/mnicky/slang/blob/gc/src/slang/core.clj) for more information.
