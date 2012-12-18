@@ -30,9 +30,9 @@ Syntax
 
 `(quote expr)` - Prevents the evaluation of _expr_.
 
-`(if test then else)` - Ordinary if clause.
+`(if test then else)` - Ordinary _IF_ clause, returning the value of _then_ or _else_.
 
-`(def name val)` - Binds the value _val_ to the _name_ in the current environment.
+`(def name val)` - Binds the value _val_ to the _name_ in the current environment. Used to define names for values/functions.
 
 `(struct)` - Returns new structure.
 
@@ -42,11 +42,11 @@ Syntax
 
 `(do exprs...)` - Evaluates all the expresions and returns the value of the last one.
 
-`(for (i 1 10) expr)` - For cycle (runs the expression in the new local environment).
+`(for (var init end) expr)` - Cycle. The _var_ will be bound to values in range [init; end]. Creates new local environment.
 
-`(fun (args...) expr)` - Definition of the function.
+`(fun (args...) expr)` - Function. Creates new local environment.
 
-`(funcname args...)` - Invocation of the function.
+`(funcname args...)` - Function invocation.
 
 
 ## Literals
@@ -69,16 +69,20 @@ See [core.clj](https://github.com/mnicky/slang/blob/gc/src/slang/core.clj) for m
 Examples
 ========
 
+Variables and functions:
+
 ```clojure
-;; Variables and functions:
 (def ans 42)
 ;=> 42
 (def second (fun (x y) y))
 ;=> #<some-fn-describing-string>
 (second "give me" ans)
 ;=> 42
+```
 
-;; Structures:
+Structures:
+
+```clojure
 (def person (struct))
 ;=> {}
 (set person name "John Doe")
@@ -87,8 +91,11 @@ Examples
 ;=> {age 42, name John Doe}
 (get person age)
 ;=> 42
+```
 
-;; Flow control:
+Flow control:
+
+```clojure
 (if (= 1 2) "This is weird world!" "Everything's ok.")
 ;=> Everything's ok.
 (for (i 1 5) (do (print i) "returned value"))
@@ -98,13 +105,16 @@ Examples
 ;4
 ;5
 ;=> returned value
+```
 
-;; Higher order functions:
-(def comp1 (fun (f g) (fun (x) (f (g x)))))
+Higher order functions:
+
+```clojure
+(def compose1 (fun (f g) (fun (x) (f (g x)))))
 (def partial1 (fun (f arg1) (fun (arg2) (f arg1 arg2))))
 (def plus7 (partial1 + 7))
 (def mul10 (partial1 * 10))
-(def plus7_mul10 (comp1 plus7 mul10))
+(def plus7_mul10 (compose1 plus7 mul10))
 (plus7_mul10 99)
 ;=> 997
 ```
