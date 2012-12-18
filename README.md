@@ -57,14 +57,14 @@ Syntax
  * Lists: `car`, `cdr`, `cons`, `list?`, `symbol?`, `print`
  * Direct environment manipulation: `new-env`, `lookup`, `bind`, `unbind`, `exists?`
 
-<br><br>
+<br>
 See [core.clj](https://github.com/mnicky/slang/blob/gc/src/slang/core.clj) for more information.
 
 Examples
 ========
 
 ```clojure
-;; Some basic things:
+;; Variables and functions:
 (def ans 42)
 ;=> 42
 (def second (fun (x y) y))
@@ -72,7 +72,28 @@ Examples
 (second "give me" ans)
 ;=> 42
 
-;; or more advanced things like this:
+;; Structures:
+(def person (struct))
+;=> {}
+(set person name "John Doe")
+;=> {name John Doe}
+(set person age 42)
+;=> {age 42, name John Doe}
+(get person age)
+;=> 42
+
+;; Flow control:
+(if (= 1 2) "This is weird world!" "Everything's ok.")
+;=> Everything's ok.
+(for (i 1 5) (do (print i) "returned value"))
+;1
+;2
+;3
+;4
+;5
+;=> returned value
+
+;; Higher order functions:
 (def comp1 (fun (f g) (fun (x) (f (g x)))))
 (def partial1 (fun (f arg1) (fun (arg2) (f arg1 arg2))))
 (def plus7 (partial1 + 7))
@@ -113,7 +134,7 @@ x
 ;=> 202
 ```
 
-
+<br>
 Copyright © 2012 Mnicky ([mnicky.github.com](http://mnicky.github.com))
 
 Distributed under the [MIT license](http://opensource.org/licenses/MIT).
