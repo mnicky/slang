@@ -203,7 +203,7 @@
       (symbol? exp)     (lookup exp env)  ;; variable reference
       (not (list? exp)) exp               ;; constant literal
       :else (case (first exp)
-              quote (second exp)                                                          ;; (quote exp)
+              quote (second exp)                                                          ;; (quote expr)
               if    (evals (if (evals (second exp) env) (third exp) (fourth exp)) env)    ;; (if test then else)
               def   (bind (second exp) (evals (third exp) env) env)                       ;; (def name val)
               get   (getf (lookup (second exp) env) (third exp))                          ;; (get structname fieldname)
@@ -212,9 +212,15 @@
                                               (evals (fourth exp) env)
                                               env) env)
               do    (last (map #(evals % env) (rest exp)))                                ;; (do exp...)
+              for   (loop [local-env (new-env env) args (second exp)]                     ;; (for (i 1 10) expr)
+                      (bind (first args) (second args) local-env)
+                      (if (< (lookup (first args) local-env) (third args))
+                        (do (evals (third exp) local-env)
+                            (recur local-env
+                                   (list (first args) (inc (second args)) (third args))))
+                        (evals (third exp) local-env)))
               fun   (fn [& args] (evals (third exp) (new-env (second exp) args env)))     ;; (fun (vars...) expr)
               (apply (evals (first exp) env) (doall (map #(evals % env) (rest exp)))))))) ;; (funcname exprs...)
-
 
 ;; add evals to the environment
 (bind 'evals evals global-env)
