@@ -1,4 +1,4 @@
-(defproject slang "0.1.0-SNAPSHOT"
+(defproject slang "0.1.1-SNAPSHOT"
   :description "Small language with Lisp-like syntax."
   :url "https://github.com/mnicky/slang"
   :license {:name "MIT License"
