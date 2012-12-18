@@ -87,10 +87,10 @@ Structures:
 ;=> {}
 (set person name "John Doe")
 ;=> {name John Doe}
-(set person age 42)
-;=> {age 42, name John Doe}
+(set person age 35)
+;=> {age 35, name John Doe}
 (get person age)
-;=> 42
+;=> 35
 ```
 
 Flow control:
