@@ -8,7 +8,7 @@ Installation
 
 You can build Slang from source:
 
-* install [leiningen](https://github.com/technomancy/leiningen#leiningen)
+* install [leiningen](https://github.com/technomancy/leiningen#leiningen) (Clojure build tool)
 * clone this repository: `git clone -b gc https://github.com/mnicky/slang`
 * in the cloned repository, run: `lein uberjar`. This will create a _.jar_ file, named _slang-VERSION-standalone.jar_, in the _target/_ directory of the cloned repository.
 
@@ -20,7 +20,7 @@ Usage
 Invoking the Slang interpreter:
 
 * run `java -jar slang-VERSION-standalone.jar` to start the Slang repl
-* run `java -jar slang-VERSION-standalone.jar FILE` to execute the file with Slang source code
+* run `java -jar slang-VERSION-standalone.jar FILE` to interpret the FILE containing Slang source code
 
 
 Syntax
