@@ -1,6 +1,7 @@
 (ns slang.core
   (:gen-class)
-  (:require [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as string]))
 
 ;;== garbage collector ======================================================
 
@@ -248,12 +249,34 @@
     (flush)
     (println (safe-evals (read *in* false "Invoke (exit) to quit the repl.")))))
 
+(defn chop-exprs
+  ""
+  [exprs]
+  (loop [chopped [] act [] lparens 0 rparens 0 todo (seq exprs)]
+    (let [[c & rest] todo]
+      (cond
+        (> rparens lparens)                        (throw (RuntimeException. "Missing '('."))
+        (and (== lparens rparens)
+             (or (= \space c)
+                 (= \( c)
+                 (empty? todo))
+             (not (empty? act)))                   (recur (conj chopped act) [] 0 0 todo)
+        (and (empty? todo) (not= lparens rparens)) (throw (RuntimeException. "Unexpected EOF."))
+        (empty? todo)                              (remove empty? (map #(.trim (clojure.string/join %)) chopped))
+        (= c \()                                   (recur chopped (conj act c) (inc lparens) rparens rest)
+        (= c \))                                   (recur chopped (conj act c) lparens (inc rparens) rest)
+        :else                                      (recur chopped (conj act c) lparens rparens rest)))))
+
 (defn exec-file
-  "Interpret the file with given 'path' (line by line)."
+  "Interpret the file with given 'path'."
   [path]
-  (with-open [r (io/reader path)]
-    (doseq [line (line-seq r)]
-      (evals (read-string line)))))
+  (with-open [r (java.io.PushbackReader. (io/reader path))]
+    (binding [*read-eval* false]
+	    (evals (read r)))))
+
+;  (with-open [r (io/reader path)]
+;    (doseq [line (line-seq r)]
+;      (evals (read-string line)))))
 
 (bind 'exec-file exec-file global-env)
 
