@@ -270,13 +270,12 @@
 (defn exec-file
   "Interpret the file with given 'path'."
   [path]
-  (with-open [r (java.io.PushbackReader. (io/reader path))]
-    (binding [*read-eval* false]
-	    (evals (read r)))))
+  (dorun (map #(evals (read-string %))
+           (chop-exprs (slurp path)))))
 
-;  (with-open [r (io/reader path)]
-;    (doseq [line (line-seq r)]
-;      (evals (read-string line)))))
+;  (with-open [r (java.io.PushbackReader. (io/reader path))]
+;    (binding [*read-eval* false]
+;	    (evals (read r)))))
 
 (bind 'exec-file exec-file global-env)
 
