@@ -6,14 +6,14 @@ Plans
 =====
 (in no particular order)
 
- - [ ] add [fexprs](http://en.wikipedia.org/wiki/Fexpr)
- - [ ] add macros? (are they needed? will it be possible to implement them just with fexprs?)
- - [ ] fix garbage collector collecting closures
- - [ ] TCO?
- - [ ] play with amb operator :)
- - [ ] proper own reader (instead of using the one from Clojure :)
- - [ ] library of useful functions etc. (with fexprs, everything should be bootstrappable)
- - [ ] explore (delimited) continuations
+- [ ] add [fexprs](http://en.wikipedia.org/wiki/Fexpr)
+- [ ] add macros? (are they needed? will it be possible to implement them just with fexprs?)
+- [ ] fix garbage collector collecting closures
+- [ ] TCO?
+- [ ] play with amb operator :)
+- [ ] proper own reader (instead of using the one from Clojure :)
+- [ ] library of useful functions etc. (with fexprs, everything should be bootstrappable)
+- [ ] explore (delimited) continuations
 
 Installation
 ============
