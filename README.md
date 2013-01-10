@@ -1,6 +1,7 @@
 # Slang
 
 Small language with Lisp-like syntax. Implemented in [Clojure](http://clojure.org).
+Aka my langdev playground :)
 
 Plans
 =====
@@ -8,12 +9,14 @@ Plans
 
 * add [fexprs](http://en.wikipedia.org/wiki/Fexpr)
 * add macros? (are they needed? will it be possible to implement them just with fexprs?)
-* fix garbage collector collecting closures
-* TCO?
-* play with amb operator :)
-* proper own reader (instead of using the one from Clojure :)
+* fix garbage collector collecting closures (or get rid of it completely)
+* [TCO](http://en.wikipedia.org/wiki/Tail_call_optimization)?
+* play with [amb](http://mitpress.mit.edu/sicp/full-text/sicp/book/node89.html) operator :)
+* own function (or fexpr) type, don't use Clojure functions?
+* own reader (instead of using the one from Clojure :)
 * library of useful functions etc. (with fexprs, everything should be bootstrappable)
-* explore (delimited) continuations
+* explore [delimited continuations](http://en.wikipedia.org/wiki/Delimited_continuation)
+* explore [first class environments](http://lambda-the-ultimate.org/node/3861)
 
 Installation
 ============
