@@ -17,6 +17,7 @@ Plans
 * library of useful functions etc. (with fexprs, everything should be bootstrappable)
 * explore [delimited continuations](http://en.wikipedia.org/wiki/Delimited_continuation)
 * explore [first class environments](http://lambda-the-ultimate.org/node/3861)
+* explore [Expansion passing style](http://cs.au.dk/~hosc/local/LaSC-1-1-pp53-75.pdf) macro mechanism
 
 Installation
 ============
