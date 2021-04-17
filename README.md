@@ -9,6 +9,7 @@ Plans
 
 * add [fexprs](http://en.wikipedia.org/wiki/Fexpr)
 * add macros? (are they needed? will it be possible to implement them just with fexprs?)
+* add [cadr](https://stackoverflow.com/a/9622249)?
 * fix garbage collector collecting closures (or get rid of it completely)
 * [TCO](http://en.wikipedia.org/wiki/Tail_call_optimization)?
 * play with [amb](http://mitpress.mit.edu/sicp/full-text/sicp/book/node89.html) operator :)
